@@ -10,22 +10,22 @@ import me.molonosov.oprefreshrate.GlobalApplication
 class RefreshRateService {
     private var appContext: Context? = null
 
-    constructor() {
+    init {
         this.appContext = GlobalApplication.getAppContext()
     }
 
-    fun getStatus(): String {
-        var value = "-1"
+    fun getStatus(): Int {
+        var value = -1
 
         try {
-            value = Settings.Global.getInt(this.appContext?.contentResolver, "oneplus_screen_refresh_rate").toString()
+            value = Settings.Global.getInt(this.appContext?.contentResolver, "oneplus_screen_refresh_rate")
         } catch (err: Error) { }
 
         return value
     }
 
     private fun setStatus(status: Int) {
-        var permission = ContextCompat.checkSelfPermission(this.appContext as Context, Manifest.permission.WRITE_SECURE_SETTINGS)
+        val permission = ContextCompat.checkSelfPermission(this.appContext as Context, Manifest.permission.WRITE_SECURE_SETTINGS)
 
         if (permission == -1) {
             Toast.makeText(this.appContext, "WRITE_SECURE_SETTINGS Permission needed", Toast.LENGTH_LONG).show()
@@ -36,11 +36,11 @@ class RefreshRateService {
     }
 
     fun toggleStatus() {
-        var currentStatus = this.getStatus()
+        val currentStatus = this.getStatus()
 
-        if (currentStatus == "2") {
-            return this.setStatus(1)
-        }
-        return this.setStatus(2)
+        if (currentStatus == 0) return this.setStatus(1)
+        else if (currentStatus == 1) return this.setStatus(2)
+
+        return this.setStatus(0)
     }
 }
